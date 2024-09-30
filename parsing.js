@@ -48,6 +48,7 @@ ET POLICY Windows Update P2P Activity
 function formatLogs(inputText) {
     const lines = inputText.split('\n');
     let formattedOutput = '';
+    let isLog = false
 
     for (let i = 0; i < lines.length; i += 2) {
         const message = lines[i];

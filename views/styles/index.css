@@ -1,0 +1,36 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space between header and footer */
+    align-items: center; /* Center content horizontally */
+    height: 100vh; /* Full viewport height */
+    margin: 0; /* Remove default margin */
+    font-family: Arial, sans-serif; /* Set a default font */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    flex-grow: 1; /* Allow this container to grow */
+}
+
+.button {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #007BFF; /* Button color */
+    color: white; /* Text color */
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    margin-top: 20px; /* Add space above the button */
+}
+
+.button:hover {
+    background-color: #0056b3; /* Darker color on hover */
+}
+
+footer {
+    text-align: center; /* Center footer text */
+    padding: 10px; /* Add padding to the footer */
+}

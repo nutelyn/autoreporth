@@ -1,63 +1,77 @@
-const predefinedText =
-`hello, this is kacang
-
-# Top 10 HIDS
-Unexpected error while resolving domain    
-4,662
-OpenLDAP connection open    
-3,723
-Successful sudo to ROOT executed    
-488
-Unknown OSSEC Event    
-430
-OpenLDAP authentication failed    
-275
-User authentication failure    
-200
-Listened ports status changed    
-188
-Windows Logon Success    
-181
-Login session opened    
-64
-Login session closed    
-62
-
-# Top 10 NIDS
-Potentially Bad Traffic    
-145,900
-stream5: TCP Small Segment Threshold Exceeded    
-7,883
-Reset Outside Window    
-7,854
-GPL SNMP public access udp    
-3,082
-GPL WEB_SERVER 403 Forbidden    
-731
-INDICATOR-COMPROMISE 403 Forbidden    
-731
-NO CONTENT-LENGTH OR TRANSFER-ENCODING IN HTTP RESPONSE    
-609
-ET POLICY Vulnerable Java Version 1.7.x Detected    
-582
-ET SCAN Suspicious inbound to Oracle SQL port 1521    
-471
-ET POLICY Windows Update P2P Activity    
-383`;
+const severityMap = {
+    "OpenLDAP connection open": "low",
+    "Successful sudo to ROOT executed": "low",
+    "Log file rotated": "low",
+    "Processes running for all users were queried with ps command": "low",
+    "Listened ports status changed": "low",
+    "Login session closed": "low",
+    "Login session opened": "low",
+    "Potentially Bad Traffic": "low",
+    "GPL SNMP public access udp": "low",
+    "Unknown Traffic": "low",
+    "stream5: TCP Small Segment Threshold Exceeded": "low",
+    "stream5: Bad segment, adjusted size <= 0": "low",
+    "GPL ICMP_INFO PING *NIX": "low",
+    "stream5: Limit on number of overlapping TCP packets reached": "low",
+    "http_inspect: CHUNK SIZE MISMATCH DETECTED": "low",
+    "SERVER-IIS Microsoft Windows IIS FastCGI request header buffer overflow attempt": "low",
+    "ET INFO Dotted Quad Host PDF Request": "low",
+    "Host-based anomaly detection event (rootcheck)": "low",
+    "Service startup type was changed": "low",
+    "ssh: Protocol mismatch": "low",
+    "SSHD authentication success": "low",
+    "Windows Logon Success": "low",
+    "ET SCAN Suspicious inbound to PostgreSQL port 5432": "low",
+    "stream5: TCP Timestamp is outside of PAWS window": "low",
+    "ET INFO Observed DNS Query to .cloud TLD": "low",
+    "SERVER-ORACLE database username buffer overflow": "low",
+    "GPL SNMP private access udp": "low",
+    "ET SCAN Suspicious inbound to Oracle SQL port 5432": "low",
+    "ET SCAN Suspicious inbound to Oracle SQL port 1521": "low",
+    "Unexpected error while resolving domain": "medium",
+    "User authentication failure": "medium",
+    "APP-DETECT Teamviewer control server ping": "medium",
+    "OS-WINDOWS Microsoft Windows getbulk request attempt": "medium",
+    "OS-WINDOWS Microsoft Windows SMB anonymous session IPC share access attempt": "medium",
+    "INDICATOR-COMPROMISE 403 Forbidden": "medium",
+    "OpenLDAP authentication failed": "medium",
+    "ET TROJAN DNS Reply Sinkhole Microsoft NO-IP Domain": "high",
+    "ET TROJAN Known Hostile Domain ant.trenz.pl Lookup": "high"
+}
 
 function formatLogs(inputText) {
     const lines = inputText.split('\n');
     let formattedOutput = '';
-    let isLog = false
 
-    for (let i = 0; i < lines.length; i += 2) {
-        const message = lines[i];
-        const events = lines[i + 1] || '';
-        formattedOutput += `- ${message.trim()} = ${events.trim()} event(s) [severity: ]\n`
+    for (let i = 0; i < lines.length; i++) {
+        const currentLine = lines[i].trim(); // Trim whitespace for the current line
+
+        if (currentLine) { // Proceed only if the current line is not empty
+            if (currentLine.startsWith('#')) {
+                // If it's a header, add it to the output
+                formattedOutput += `\n${currentLine}\n`;
+            } else {
+                // Check if the next line exists and is a number (event count)
+                if (i + 1 < lines.length) {
+                    const nextLine = lines[i + 1].trim(); // Trim whitespace for the next line
+
+                    // Ensure nextLine is not empty and matches the expected format (number)
+                    if (nextLine && /^\d[\d,]*$/.test(nextLine)) {
+                        const severity = severityMap[currentLine] || "";
+                        formattedOutput += `- ${currentLine} = ${nextLine} event(s) [severity: ${severity}]\n`;
+                        i++; // Increment i to skip the next line since it's processed
+                    } else {
+                        // Handle unexpected next line format
+                        formattedOutput += `- ${currentLine} = [Missing event count] event(s) [severity: ]\n`;
+                    }
+                } else {
+                    // If there's no next line, handle the case
+                    formattedOutput += `- ${currentLine} = [Missing event count] event(s) [severity: ]\n`;
+                }
+            }
+        }
     }
-
     return formattedOutput;
 }
 
-let formattedText = formatLogs(predefinedText);
-console.log(formattedText);
+module.exports = { formatLogs };

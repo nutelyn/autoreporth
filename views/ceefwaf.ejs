@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>ceefwaf autoreport v1.0</title>
+</head>
+<body>
+   <h1>ceefwaf autoreport v1.0-dev</h1>
+   
+   <form action="/ceefwaf" method="POST">
+      <textarea style="height: 80vh; width: 60vw;" name="text" rows="150" cols="50" placeholder="Enter your text here..."><%= formattedText || '# Top 10 HIDS\n\n# Top 10 NIDS\n\n'%></textarea>
+      <br>
+      <button type="submit">format</button>
+   </form>
+</body>
+</html>

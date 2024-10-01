@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const { formatLogs } = require('./parsing.js');
+const { formatLogs, ceefFormatLogs } = require('./parsing.js');
 const { auth } = require('./auth.js');
 
 const app = express();
@@ -28,6 +28,18 @@ app.post('/mandoloqr', (req, res) => {
         `Dear Team Mandala,\nBerikut kami laporkan mengenai aktivitas berdasarkan log monitoring SIEM last 6H.`;
     let formatted = formatLogs(inputText);
     res.render('mandoloqradar', { formattedText: `${predef}\n${formatted}` });
+});
+
+app.get('/ceefwaf', (req, res) => {
+    res.render('ceefwaf', { formattedText: null });
+});
+
+app.post('/ceefwaf', (req, res) => {
+    const inputText = req.body.text;
+    let salam = '';
+    let predef = ``;
+    let formatted = ceefFormatLogs(inputText);
+    res.render('ceefwaf', {formattedText: null });
 });
 
 app.listen(PORT, () => {

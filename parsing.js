@@ -74,4 +74,8 @@ function formatLogs(inputText) {
     return formattedOutput;
 }
 
-module.exports = { formatLogs };
+function ceefFormatLogs(){
+    
+}
+
+module.exports = { formatLogs, ceefFormatLogs };

@@ -27,7 +27,7 @@ function auth(req, res, next) {
 }
 
 function checkCookieAuth(req, res, next) {
-    if (req.cookies && req.cookies.authToken === 'authenticated') {
+    if (req.cookies && req.cookies.authToken === 'af11cdaaba25a1fb8dacae471c083d2b') {
         return next();
     }
 

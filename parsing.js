@@ -1,71 +1,75 @@
 const severityMap = {
-    "OpenLDAP connection open": "low",
-    "Successful sudo to ROOT executed": "low",
-    "Log file rotated": "low",
-    "Processes running for all users were queried with ps command": "low",
-    "Listened ports status changed": "low",
-    "Login session closed": "low",
-    "Login session opened": "low",
-    "Potentially Bad Traffic": "low",
-    "GPL SNMP public access udp": "low",
-    "Unknown Traffic": "low",
-    "stream5: TCP Small Segment Threshold Exceeded": "low",
-    "stream5: Bad segment, adjusted size <= 0": "low",
-    "GPL ICMP_INFO PING *NIX": "low",
-    "stream5: Limit on number of overlapping TCP packets reached": "low",
-    "http_inspect: CHUNK SIZE MISMATCH DETECTED": "low",
-    "SERVER-IIS Microsoft Windows IIS FastCGI request header buffer overflow attempt": "low",
-    "ET INFO Dotted Quad Host PDF Request": "low",
-    "Host-based anomaly detection event (rootcheck)": "low",
-    "Service startup type was changed": "low",
-    "ssh: Protocol mismatch": "low",
-    "SSHD authentication success": "low",
-    "Windows Logon Success": "low",
-    "ET SCAN Suspicious inbound to PostgreSQL port 5432": "low",
-    "stream5: TCP Timestamp is outside of PAWS window": "low",
-    "ET INFO Observed DNS Query to .cloud TLD": "low",
-    "SERVER-ORACLE database username buffer overflow": "low",
-    "GPL SNMP private access udp": "low",
-    "ET SCAN Suspicious inbound to Oracle SQL port 5432": "low",
-    "ET SCAN Suspicious inbound to Oracle SQL port 1521": "low",
-    "Unexpected error while resolving domain": "medium",
-    "User authentication failure": "medium",
-    "APP-DETECT Teamviewer control server ping": "medium",
-    "OS-WINDOWS Microsoft Windows getbulk request attempt": "medium",
-    "OS-WINDOWS Microsoft Windows SMB anonymous session IPC share access attempt": "medium",
-    "INDICATOR-COMPROMISE 403 Forbidden": "medium",
-    "OpenLDAP authentication failed": "medium",
-    "ET TROJAN DNS Reply Sinkhole Microsoft NO-IP Domain": "high",
-    "ET TROJAN Known Hostile Domain ant.trenz.pl Lookup": "high"
-}
+    "OpenLDAP connection open": "Low",
+    "Successful sudo to ROOT executed": "Low",
+    "Log file rotated": "Low",
+    "Processes running for all users were queried with ps command": "Low",
+    "Listened ports status changed": "Low",
+    "Login session closed": "Low",
+    "Login session opened": "Low",
+    "Potentially Bad Traffic": "Low",
+    "GPL SNMP public access udp": "Low",
+    "Unknown Traffic": "Low",
+    "stream5: TCP Small Segment Threshold Exceeded": "Low",
+    "stream5: Bad segment, adjusted size <= 0": "Low",
+    "GPL ICMP_INFO PING *NIX": "Low",
+    "stream5: Limit on number of overlapping TCP packets reached": "Low",
+    "http_inspect: CHUNK SIZE MISMATCH DETECTED": "Low",
+    "SERVER-IIS Microsoft Windows IIS FastCGI request header buffer overfLow attempt": "Low",
+    "ET INFO Dotted Quad Host PDF Request": "Low",
+    "Host-based anomaly detection event (rootcheck)": "Low",
+    "Service startup type was changed": "Low",
+    "ssh: Protocol mismatch": "Low",
+    "SSHD authentication success": "Low",
+    "Windows Logon Success": "Low",
+    "ET SCAN Suspicious inbound to PostgreSQL port 5432": "Low",
+    "stream5: TCP Timestamp is outside of PAWS window": "Low",
+    "ET INFO Observed DNS Query to .cloud TLD": "Low",
+    "SERVER-ORACLE database username buffer overfLow": "Low",
+    "GPL SNMP private access udp": "Low",
+    "ET SCAN Suspicious inbound to Oracle SQL port 5432": "Low",
+    "ET SCAN Suspicious inbound to Oracle SQL port 1521": "Low",
+    "Unexpected error while resolving domain": "Medium",
+    "User authentication failure": "Medium",
+    "APP-DETECT Teamviewer control server ping": "Medium",
+    "OS-WINDOWS Microsoft Windows getbulk request attempt": "Medium",
+    "OS-WINDOWS Microsoft Windows SMB anonymous session IPC share access attempt": "Medium",
+    "INDICATOR-COMPROMISE 403 Forbidden": "Medium",
+    "OpenLDAP authentication failed": "Medium",
+    "ET TROJAN DNS Reply Sinkhole Microsoft NO-IP Domain": "High",
+    "ET TROJAN Known Hostile Domain ant.trenz.pl Lookup": "High"
+};
+const abuseipkey = '<secret_key>';
+const categoriesMap = {
+    "11": "Email Spam",
+    "18": "Bruteforce",
+    "15": "Hacking",
+    "14": "Port Scan",
+    "20": "Exploited Host"
+
+};
 
 function formatLogs(inputText) {
     const lines = inputText.split('\n');
     let formattedOutput = '';
 
     for (let i = 0; i < lines.length; i++) {
-        const currentLine = lines[i].trim(); // Trim whitespace for the current line
+        const currentLine = lines[i].trim();
 
-        if (currentLine) { // Proceed only if the current line is not empty
+        if (currentLine) {
             if (currentLine.startsWith('#')) {
-                // If it's a header, add it to the output
                 formattedOutput += `\n${currentLine}\n`;
             } else {
-                // Check if the next line exists and is a number (event count)
                 if (i + 1 < lines.length) {
-                    const nextLine = lines[i + 1].trim(); // Trim whitespace for the next line
+                    const nextLine = lines[i + 1].trim();
 
-                    // Ensure nextLine is not empty and matches the expected format (number)
                     if (nextLine && /^\d[\d,]*$/.test(nextLine)) {
                         const severity = severityMap[currentLine] || "";
                         formattedOutput += `- ${currentLine} = ${nextLine} event(s) [severity: ${severity}]\n`;
-                        i++; // Increment i to skip the next line since it's processed
+                        i++;
                     } else {
-                        // Handle unexpected next line format
                         formattedOutput += `- ${currentLine} = [Missing event count] event(s) [severity: ]\n`;
                     }
                 } else {
-                    // If there's no next line, handle the case
                     formattedOutput += `- ${currentLine} = [Missing event count] event(s) [severity: ]\n`;
                 }
             }
@@ -74,4 +78,103 @@ function formatLogs(inputText) {
     return formattedOutput;
 }
 
-module.exports = { formatLogs };
+const abuselink = 'https://www.abuseipdb.com/check/'
+const crimilink = 'https://www.criminalip.io/asset/report/'
+const viruslink = 'https://www.virustotal.com/gui/ip-address/'
+
+async function formatIP(inputText) {
+    const lines = inputText.split('\n');
+    const ipregex = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
+    let formattedOutput = [];
+    let availableIp = [];
+    let currentip, count = null;
+
+    for (let i = 0; i < lines.length; i++) {
+        const ipmatch = lines[i].match(ipregex);
+
+        if(ipmatch) {
+            currentip = ipmatch[0];
+            availableIp.push(currentip)
+        } else if (currentip && lines[i].trim().length > 0) {
+            let category = await getCategory(currentip);
+            count = lines[i].trim();
+            if (category == 'clean') {
+                if (count > 10) {
+                    category = 'Bruteforce';
+                } else if (count <= 10) {
+                    category = 'Port Scan';
+                }
+            }
+            formattedOutput.push(`${currentip} - ${count}x ${category}`);
+            formattedOutput.push(`${abuselink}${currentip}`);
+            formattedOutput.push(`${crimilink}${currentip}`);
+            formattedOutput.push(`${viruslink}${currentip}\n`);
+            currentip = null;
+        }
+    }
+    return formattedOutput;
+}
+
+async function getCategoryAPI(ipAddr) {
+    const ip = String(ipAddr);
+    const maxAgeInDays = 365;
+    const numPage = 1;
+    const perPage = 25;
+    let mostFrequentCategory = null;
+    let maxCount = 0;
+    const categoryCount = {};
+
+    const url = new URL('https://api.abuseipdb.com/api/v2/reports');
+    url.search = new URLSearchParams({
+        ipAddress: ip,
+        maxAgeInDays: maxAgeInDays,
+        page: numPage,
+        perPage: perPage
+    });
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Key': abuseipkey,
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const results = data.data.results;
+
+        if (results.length === 0) {
+            return 'clean';
+        } else {
+            results.forEach(report => {
+                report.categories.forEach(category => {
+                    categoryCount[category] = (categoryCount[category] || 0) + 1;
+                });
+            });
+        }
+
+        for (const category in categoryCount) {
+            if (categoryCount[category] > maxCount) {
+                maxCount = categoryCount[category];
+                mostFrequentCategory = category;
+            }
+        }
+
+        return mostFrequentCategory ? categoriesMap[mostFrequentCategory] : 'clean';
+    } catch (error) {
+        console.error('Error:', error);
+        return 'Error occurred';
+    }
+}
+
+async function getCategory(ipAddr) {
+    const attack = await getCategoryAPI(String(ipAddr));
+    return attack;
+}
+
+module.exports = { formatLogs, formatIP };

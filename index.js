@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const { formatLogs, ceefFormatLogs } = require('./parsing.js');
+const { formatLogs, ceefFormatLogs, greetTime } = require('./parsing.js');
 const { auth } = require('./auth.js');
 
 const app = express();
@@ -36,10 +36,9 @@ app.get('/ceefwaf', (req, res) => {
 
 app.post('/ceefwaf', (req, res) => {
     const inputText = req.body.text;
-    let salam = '';
-    let predef = ``;
+    let salam = greetTime();
     let formatted = ceefFormatLogs(inputText);
-    res.render('ceefwaf', {formattedText: null });
+    res.render('ceefwaf', {formattedText: `${salam}\n\n${formatted}` });
 });
 
 app.listen(PORT, () => {

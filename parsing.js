@@ -39,6 +39,36 @@ const severityMap = {
     "ET TROJAN Known Hostile Domain ant.trenz.pl Lookup": "high"
 }
 
+function greetTime(){
+    // Declare the class to get current time
+    const time = new Date();
+    // Get only the hour
+    let currentHour = time.getHours();
+    // Return the greeting based on the time range
+    if (currentHour > 4 && currentHour <= 10){
+        return "Selamat Pagi,";
+    }
+    else if (currentHour > 10 && currentHour <= 14){
+        return "Selamat Siang,";
+    }
+    else if (currentHour > 14 && currentHour <= 19){
+        return "Selamat Sore,";
+    }
+    else if (currentHour > 19 && currentHour <= 4){
+        return "Selamat malam,";
+    }
+}
+
+function getDate(){
+    // Create Date() class
+    const time = new Date();
+    
+    // Formatting the time
+    let options = { day: '2-digit', month: 'long', year: 'numeric' };
+    let date = time.toLocaleDateString('in-ID', options)
+    return date;
+}
+
 function formatLogs(inputText) {
     const lines = inputText.split('\n');
     let formattedOutput = '';
@@ -58,15 +88,15 @@ function formatLogs(inputText) {
                     // Ensure nextLine is not empty and matches the expected format (number)
                     if (nextLine && /^\d[\d,]*$/.test(nextLine)) {
                         const severity = severityMap[currentLine] || "";
-                        formattedOutput += `- ${currentLine} = ${nextLine} event(s) [severity: ${severity}]\n`;
+                        formattedOutput += `- ${currentLine} = ${nextLine} event(s) [Severity: ${severity}]\n`;
                         i++; // Increment i to skip the next line since it's processed
                     } else {
                         // Handle unexpected next line format
-                        formattedOutput += `- ${currentLine} = [Missing event count] event(s) [severity: ]\n`;
+                        formattedOutput += `- ${currentLine} = [Missing event count] event(s) [Severity: ]\n`;
                     }
                 } else {
                     // If there's no next line, handle the case
-                    formattedOutput += `- ${currentLine} = [Missing event count] event(s) [severity: ]\n`;
+                    formattedOutput += `- ${currentLine} = [Missing event count] event(s) [Severity: ]\n`;
                 }
             }
         }
@@ -74,8 +104,42 @@ function formatLogs(inputText) {
     return formattedOutput;
 }
 
-function ceefFormatLogs(){
-    
+function ceefFormatLogs(inputText){
+    // Predefined
+    let date = getDate();
+    let predef = `Kami infokan ada serangan yang berlangsung pada ${date} sejak pukul [WAKTU] dan sudah ditangani CloudFlare. Untuk informasi lebih detail sebagai berikut:
+\n\n`;
+
+    // Preparing the inputs for parsing
+    const lines = inputText.split('\n');
+    let formattedOutput = predef;
+    // Parsing
+    for (let i = 0; i < lines.length; i++){
+        let currentLine = lines[i].trim();
+        console.log(currentLine);
+        // If some dummy paste it in
+        if (currentLine === "Top events by source"){
+            i++;
+            i++;
+            currentLine = lines[i].trim();
+        }
+        // If for some reason the input is empty
+        switch (currentLine){
+            case "Source IP Addresses":
+                console.log("test");
+                formattedOutput += "# Top IP Addresses\n";
+                i++;
+                while(currentLine !== "User Agents"){
+                    console.log("test");
+                    formattedOutput += currentLine;
+                    i += 2;
+                }
+                break;
+        }
+
+    }
+
+    return formattedOutput;
 }
 
-module.exports = { formatLogs, ceefFormatLogs };
+module.exports = { formatLogs, ceefFormatLogs, greetTime };

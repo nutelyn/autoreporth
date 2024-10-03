@@ -1,3 +1,33 @@
+function greetTime(){
+    // Declare the class to get current time
+    const time = new Date();
+    // Get only the hour
+    let currentHour = time.getHours();
+    // Return the greeting based on the time range
+    if (currentHour > 4 && currentHour <= 10){
+        return "Selamat Pagi,";
+    }
+    else if (currentHour > 10 && currentHour <= 14){
+        return "Selamat Siang,";
+    }
+    else if (currentHour > 14 && currentHour <= 19){
+        return "Selamat Sore,";
+    }
+    else if ((currentHour > 19 && currentHour <= 24) || currentHour <= 4){
+        return "Selamat malam,";
+    }
+}
+
+function getDate(){
+    // Create Date() class
+    const time = new Date();
+    
+    // Formatting the time
+    let options = { day: '2-digit', month: 'long', year: 'numeric' };
+    let date = time.toLocaleDateString('in-ID', options)
+    return date;
+}
+
 const severityMap = {
     "OpenLDAP connection open": "low",
     "Successful sudo to ROOT executed": "low",
@@ -39,36 +69,6 @@ const severityMap = {
     "ET TROJAN Known Hostile Domain ant.trenz.pl Lookup": "high"
 }
 
-function greetTime(){
-    // Declare the class to get current time
-    const time = new Date();
-    // Get only the hour
-    let currentHour = time.getHours();
-    // Return the greeting based on the time range
-    if (currentHour > 4 && currentHour <= 10){
-        return "Selamat Pagi,";
-    }
-    else if (currentHour > 10 && currentHour <= 14){
-        return "Selamat Siang,";
-    }
-    else if (currentHour > 14 && currentHour <= 19){
-        return "Selamat Sore,";
-    }
-    else if (currentHour > 19 && currentHour <= 4){
-        return "Selamat malam,";
-    }
-}
-
-function getDate(){
-    // Create Date() class
-    const time = new Date();
-    
-    // Formatting the time
-    let options = { day: '2-digit', month: 'long', year: 'numeric' };
-    let date = time.toLocaleDateString('in-ID', options)
-    return date;
-}
-
 function formatLogs(inputText) {
     const lines = inputText.split('\n');
     let formattedOutput = '';
@@ -104,11 +104,30 @@ function formatLogs(inputText) {
     return formattedOutput;
 }
 
+const cfHeaders = {
+    "Source IP Addresses": "# Top IP Addresses:\n",
+    "Paths": "\n# Paths:\n",
+    "Countries": "\n# Top Countries:\n",
+    "Hosts": "\n# Hosts:\n",
+    "Source ASNs": "\n# Top ASNs:\n",
+    "Firewall rules": "\n# Firewall rules:\n",
+    "Rate limiting rules": "\n# Rate limiting rules:\n",
+    "Managed rules": "\n# Managed rules:\n",
+    "HTTP DDoS rules": "\n# HTTP DDoS rules:\n",
+    "HTTP Methods": "\n# HTTP Methods: "
+};
+
+const httpMethods = [
+    'GET', 'HEAD', 'OPTIONS', 'TRACE',
+    'PUT', 'DELETE', 'POST', 'PATCH',
+    'CONNECT'
+];
+
 function ceefFormatLogs(inputText){
     // Predefined
     let date = getDate();
     let predef = `Kami infokan ada serangan yang berlangsung pada ${date} sejak pukul [WAKTU] dan sudah ditangani CloudFlare. Untuk informasi lebih detail sebagai berikut:
-\n\n`;
+\n`;
 
     // Preparing the inputs for parsing
     const lines = inputText.split('\n');
@@ -116,29 +135,51 @@ function ceefFormatLogs(inputText){
     // Parsing
     for (let i = 0; i < lines.length; i++){
         let currentLine = lines[i].trim();
-        console.log(currentLine);
         // If some dummy paste it in
         if (currentLine === "Top events by source"){
             i++;
-            i++;
-            currentLine = lines[i].trim();
+            continue;
+        }
+        // If it's a count
+        else if (/(^\d*$)|(\d*k$)/.test(currentLine)){
+            continue;
+        }
+        // If it's user agent
+        else if (currentLine === "User Agents"){
+            while(!(lines[i+1].trim() in cfHeaders)){
+                i++;
+                currentLine = lines[i].trim();
+            }
         }
         // If for some reason the input is empty
-        switch (currentLine){
-            case "Source IP Addresses":
-                console.log("test");
-                formattedOutput += "# Top IP Addresses\n";
-                i++;
-                while(currentLine !== "User Agents"){
-                    console.log("test");
-                    formattedOutput += currentLine;
-                    i += 2;
+        else if (currentLine === ""){
+            continue;
+        }
+        // Process good input
+        else {
+            // If it's a header
+            if (currentLine in cfHeaders){
+                formattedOutput += cfHeaders[currentLine];
+            }
+            // For http method section
+            else if (httpMethods.includes(currentLine)){
+                // Check if there is still antoher item
+                if (lines[i+2]){
+                    formattedOutput += `${currentLine}, `;
                 }
-                break;
+                else {
+                    formattedOutput += `${currentLine}`;
+                }
+            }
+            else if (currentLine === "No data"){
+                formattedOutput += `- N/A\n`;
+            }
+            else {
+                formattedOutput += `- ${currentLine}\n`;
+            }
         }
 
     }
-
     return formattedOutput;
 }
 

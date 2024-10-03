@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const { formatLogs, formatIP } = require('./parsing.js');
-const { auth, checkCookieAuth } = require('./auth.js');
+const { formatLogs, ceefFormatLogs, greetTime } = require('./parsing.js');
+const { auth } = require('./auth.js');
 
 const app = express();
 const PORT = 3000;
@@ -30,6 +30,18 @@ app.post('/mandoloqr', checkCookieAuth, (req, res) => {
     res.render('mandoloqradar', { formattedText: `${predef}\n${formatted}` });
 });
 
+app.get('/ceefwaf', (req, res) => {
+    res.render('ceefwaf', { formattedText: null });
+});
+
+app.post('/ceefwaf', (req, res) => {
+    const inputText = req.body.text;
+    let salam = greetTime();
+    let formatted = ceefFormatLogs(inputText);
+    res.render('ceefwaf', {formattedText: `${salam}\n\n${formatted}` });
+});
+
+
 app.get('/mandoloip', checkCookieAuth, (req, res) => {
     res.render('mandoloip', { formattedText: null });
 });
@@ -47,6 +59,7 @@ app.post('/mandoloip', checkCookieAuth, async (req, res) => {
         res.status(500).send('An error occurred while processing the request.');
     }
 });
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

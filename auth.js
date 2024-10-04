@@ -12,16 +12,9 @@ function auth(req, res, next) {
     const user = basicAuth(req);
 
     const uname = 'dege';
-    const passw = '108d8ea12261d42767f29e8739fd0c34';
-
-    if (req.session.authToken) {
-        console.log('Cookie found:', req.session.authToken);
-        return next();
-    }
+    const passw = '108d8ea12261d42767f29e8739fd0c34'
 
     if (user && user.name === uname && md5Hash(user.pass) === passw) {
-        console.log('Setting cookie');
-        req.session.authToken = 'authenticated';
         return next();
     }
 

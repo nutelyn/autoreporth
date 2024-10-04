@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const { formatLogs, formatIP } = require('./parsing.js');
-const { auth, checkCookieAuth } = require('./auth.js');
+const { formatLogs, ceefFormatLogs, greetTime } = require('./parsing.js');
+const { auth } = require('./auth.js');
 
 const app = express();
 const PORT = 3000;
@@ -10,14 +10,14 @@ const PORT = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'views')));
 app.set('view engine', 'ejs');
 
-app.use(express.static(path.join(__dirname, 'views')));
-
-app.get('/', (req, res) => {
+app.get('/', auth, (req, res) => {
     res.render('index');
 });
 
+// mandolo qradar log parse
 app.get('/mandoloqr', (req, res) => {
     res.render('mandoloqradar', { formattedText: null });
 });
@@ -30,7 +30,8 @@ app.post('/mandoloqr', (req, res) => {
     res.render('mandoloqradar', { formattedText: `${predef}\n${formatted}\nTerima Kasih` });
 });
 
-app.get('/mandoloip', (req, res) => {
+// mandolo ip parse
+app.get('/mandoloip', checkCookieAuth, (req, res) => {
     res.render('mandoloip', { formattedText: null });
 });
 
@@ -47,6 +48,19 @@ app.post('/mandoloip', async (req, res) => {
         res.status(500).send('An error occurred while processing the request.');
     }
 });
+
+// cloudflare parse
+app.get('/ceefwaf', (req, res) => {
+    res.render('ceefwaf', { formattedText: null });
+});
+
+app.post('/ceefwaf', (req, res) => {
+    const inputText = req.body.text;
+    let salam = greetTime();
+    let formatted = ceefFormatLogs(inputText);
+    res.render('ceefwaf', {formattedText: `${salam}\n\n${formatted}` });
+});
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });

@@ -31,7 +31,7 @@ app.post('/mandoloqr', (req, res) => {
 });
 
 // mandolo ip parse
-app.get('/mandoloip', checkCookieAuth, (req, res) => {
+app.get('/mandoloip', (req, res) => {
     res.render('mandoloip', { formattedText: null });
 });
 

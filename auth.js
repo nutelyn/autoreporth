@@ -29,5 +29,5 @@ function auth(req, res, next) {
     return res.status(401).send('no wae you got no access, u must be heker');
 }
 
-module.exports = { auth, checkCookieAuth };
+module.exports = { auth };
 

@@ -14,27 +14,27 @@ app.set('view engine', 'ejs');
 
 app.use(express.static(path.join(__dirname, 'views')));
 
-app.get('/', auth, (req, res) => {
+app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/mandoloqr', checkCookieAuth, (req, res) => {
+app.get('/mandoloqr', (req, res) => {
     res.render('mandoloqradar', { formattedText: null });
 });
 
-app.post('/mandoloqr', checkCookieAuth, (req, res) => {
+app.post('/mandoloqr', (req, res) => {
     const inputText = req.body.text;
     let predef =
         `Dear Team Mandala,\nBerikut kami laporkan mengenai aktivitas berdasarkan log monitoring SIEM last 6H.`;
     let formatted = formatLogs(inputText);
-    res.render('mandoloqradar', { formattedText: `${predef}\n${formatted}` });
+    res.render('mandoloqradar', { formattedText: `${predef}\n${formatted}\nTerima Kasih` });
 });
 
-app.get('/mandoloip', checkCookieAuth, (req, res) => {
+app.get('/mandoloip', (req, res) => {
     res.render('mandoloip', { formattedText: null });
 });
 
-app.post('/mandoloip', checkCookieAuth, async (req, res) => {
+app.post('/mandoloip', async (req, res) => {
     const inputText = req.body.text;
     const predefTop = 'Dalam 6 jam terakhir kami menemukan adanya IP eksternal yang mencurigakan berikut:';
     const predefBot = 'Kami sarankan untuk blok IP yang terindikasi mencurigakan\nTerima kasih.'

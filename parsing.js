@@ -28,6 +28,19 @@ const severityMap = {
     "GPL SNMP private access udp": "Low",
     "ET SCAN Suspicious inbound to Oracle SQL port 5432": "Low",
     "ET SCAN Suspicious inbound to Oracle SQL port 1521": "Low",
+    "Unknown OSSEC Event": "Low",
+    "Reset Outside Window": "Low",
+    "GPL WEB_SERVER 403 Forbidden": "Low",
+    "ET POLICY Windows Update P2P Activity": "Low",
+    "sensitive_data: sensitive data global threshold exceeded": "Low",
+    "ET SCAN Suspicious inbound to mySQL port 3306": "Low",
+    "SERVER-ORACLE alter database attempt": "Low",
+    "SERVER-ORACLE grant attempt": "Low",
+    "ET POLICY Vulnerable Java Version 1.7.x Detected": "Low",
+    "ET DNS Query for .to TLD": "Low",
+    "SERVER-ORACLE truncate table attempt": "Low",
+    "ET P2P MS WUDO Peer Sync": "Low",
+
     "Unexpected error while resolving domain": "Medium",
     "User authentication failure": "Medium",
     "APP-DETECT Teamviewer control server ping": "Medium",
@@ -35,8 +48,14 @@ const severityMap = {
     "OS-WINDOWS Microsoft Windows SMB anonymous session IPC share access attempt": "Medium",
     "INDICATOR-COMPROMISE 403 Forbidden": "Medium",
     "OpenLDAP authentication failed": "Medium",
+    "NO CONTENT-LENGTH OR TRANSFER-ENCODING IN HTTP RESPONSE": "Medium",
+    "MALWARE-CNC Win.Trojan.NetWiredRC variant keepalive": "Medium",
+    "HI_SERVER_PROTOCOL_OTHER": "Medium",
+    "INDICATOR-SHELLCODE x86 inc ecx NOOP": "Medium",
+
     "ET TROJAN DNS Reply Sinkhole Microsoft NO-IP Domain": "High",
-    "ET TROJAN Known Hostile Domain ant.trenz.pl Lookup": "High"
+    "ET TROJAN Known Hostile Domain ant.trenz.pl Lookup": "High",
+    "NETBIOS SMB srvsvc named pipe creation attempt": "High"
 };
 const abuseipkey = '<secret_key>';
 const categoriesMap = {

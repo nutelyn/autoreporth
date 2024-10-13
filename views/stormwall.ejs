@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>stormwall autoreport v1.0</title>
+</head>
+<body>
+   <h1>stormwall autoreport v1.0-dev</h1>
+   
+   <form action="/stormwall" method="POST">
+      <!-- <h1 style="color: red;">MOHON JANGAN LUPA GANTI PLACEHOLDERNYA</h1> -->
+      <textarea style="height: 80vh; width: 60vw;" name="text" rows="150" cols="50" placeholder="Enter your text here..."><%= formattedText || '# Date = \n\n# Managed Rules:\n\n# Top 5 IP Address:\n\n# Top 5 ASNs:\n\n' %></textarea>
+      <br>
+      <button type="submit">format</button>
+   </form>
+</body>
+</html>

@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const { formatLogs, ceefFormatLogs, greetTime } = require('./parsing.js');
+const { formatLogs, ceefFormatLogs, greetTime, formatIP, stormwallLogs } = require('./parsing.js');
 const { auth } = require('./auth.js');
 
 const app = express();
@@ -58,7 +58,19 @@ app.post('/ceefwaf', (req, res) => {
     const inputText = req.body.text;
     let salam = greetTime();
     let formatted = ceefFormatLogs(inputText);
-    res.render('ceefwaf', {formattedText: `${salam}\n\n${formatted}` });
+    res.render('ceefwaf', { formattedText: `${salam}\n\n${formatted}` });
+});
+
+// stormwall parse
+app.get('/stormwall', (req, res) => {
+    res.render('stormwall', { formattedText: null });
+});
+
+app.post('/stormwall', (req, res) => {
+    const inputText = req.body.text;
+    let salam = greetTime();
+    let formatted = stormwallLogs(inputText);
+    res.render('stormwall', { formattedText: `${salam}\n\n${formatted}` });
 });
 
 app.listen(PORT, () => {

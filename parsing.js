@@ -83,7 +83,9 @@ const cfHeaders = {
 const httpMethods = [
     'GET', 'HEAD', 'OPTIONS', 'TRACE',
     'PUT', 'DELETE', 'POST', 'PATCH',
-    'CONNECT'
+    'CONNECT', 'PROPFIND', 'PROPPATCH',
+    'REPORT', 'MKCOL', 'MKCALENDAR',
+    'ACL', 'COPY', 'MOVE', 'LOCL', 'UNLOCK'
 ];
 
 const abuselink = 'https://www.abuseipdb.com/check/';
@@ -306,12 +308,20 @@ async function getCategory(ipAddr) {
 }
 
 function getTimeStormwall(lines){
+    // Filter the Hours 
     let time = lines.substr(lines.indexOf(":") - 2, 2);
     time = (+time + 4);
     if(time >= 24){
         time -= 24;
     }
+    // Check whether or not someone uses the old / new dashboard
+    const date = new Date();
+    const hour = date.getHours();
+    if (Math.abs(time - hour) > 1){
+        time += 3;
+    }
     time = time.toString().padStart(2,"0");
+    // Get the minutes
     time += lines.substr(lines.indexOf(":"), 3);
     return time;
 }

@@ -34,3 +34,17 @@ footer {
     text-align: center; /* Center footer text */
     padding: 10px; /* Add padding to the footer */
 }
+
+#random{
+    text-align: left;
+    position: absolute;
+    z-index: 1;
+    color: white;
+}
+
+#ship{
+    position: absolute;
+    z-index: 1;
+    width: 100px;
+    height: auto;
+}

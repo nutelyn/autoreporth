@@ -83,7 +83,9 @@ const cfHeaders = {
 const httpMethods = [
     'GET', 'HEAD', 'OPTIONS', 'TRACE',
     'PUT', 'DELETE', 'POST', 'PATCH',
-    'CONNECT'
+    'CONNECT', 'PROPFIND', 'PROPPATCH',
+    'REPORT', 'MKCOL', 'MKCALENDAR',
+    'ACL', 'COPY', 'MOVE', 'LOCL', 'UNLOCK'
 ];
 
 const abuselink = 'https://www.abuseipdb.com/check/';
@@ -106,7 +108,7 @@ function greetTime(){
         return "Selamat Sore,";
     }
     else if ((currentHour > 19 && currentHour <= 24) || currentHour <= 4){
-        return "Selamat malam,";
+        return "Selamat Malam,";
     }
 }
 
@@ -136,13 +138,13 @@ function formatLogs(inputText) {
 
                     if (nextLine && /^\d[\d,]*$/.test(nextLine)) {
                         const severity = severityMap[currentLine] || "";
-                        formattedOutput += `- ${currentLine} = ${nextLine} event(s) [severity: ${severity}]\n`;
+                        formattedOutput += `- ${currentLine} = ${nextLine} event(s) [Severity: ${severity}]\n`;
                         i++;
                     } else {
-                        formattedOutput += `- ${currentLine} = [Missing event count] event(s) [severity: ]\n`;
+                        formattedOutput += `- ${currentLine} = [Missing event count] event(s) [Severity: ]\n`;
                     }
                 } else {
-                    formattedOutput += `- ${currentLine} = [Missing event count] event(s) [severity: ]\n`;
+                    formattedOutput += `- ${currentLine} = [Missing event count] event(s) [Severity: ]\n`;
                 }
             }
         }
@@ -305,4 +307,69 @@ async function getCategory(ipAddr) {
     return attack;
 }
 
-module.exports = { formatLogs, formatIP, formatLogs, ceefFormatLogs, greetTime};
+function getTimeStormwall(lines){
+    // Filter the Hours 
+    let time = lines.substr(lines.indexOf(":") - 2, 2);
+    time = (+time + 4);
+    if(time >= 24){
+        time -= 24;
+    }
+    // Check whether or not someone uses the old / new dashboard
+    const date = new Date();
+    const hour = date.getHours();
+    if (Math.abs(time - hour) > 1){
+        time += 3;
+    }
+    time = time.toString().padStart(2,"0");
+    // Get the minutes
+    time += lines.substr(lines.indexOf(":"), 3);
+    return time;
+}
+
+function stormwallLogs(inputText){
+    // Getting today's date
+    let date = getDate();
+
+    // Preparing the inputs for parsing
+    const lines = inputText.split('\n');
+    
+    // Getting the time of attack
+    let i = 0;
+    let time = getTimeStormwall(lines[i]);
+    i++;
+
+    // Predefined
+    let predef = `Kami infokan sedang ada active attack pada stormwall tanggal ${date} jam ${time}, packet tersebut sudah di clean oleh StormWall. Untuk informasi lebih detail sebagai berikut:\n`;
+    let formattedOutput = predef;
+
+    // Parsing
+    let rules;
+    for (i; i < lines.length; i++){
+        let currentLine = lines[i].trim();
+        // If it's not empty
+        if(currentLine !== ""){
+            // Handle managed rules
+            if (currentLine === "# Managed Rules:"){
+                rules = `\n${currentLine}\n`;
+                while(!(/(^PPS*)|(^BPS*)/.test(currentLine))){
+                    i++;
+                    currentLine = lines[i].trim();
+                }
+                rules += `- ${currentLine}\n`;
+            }
+            // Check if it's a header
+            else if(currentLine.includes("#")){
+                formattedOutput += `\n${currentLine}\n`;
+            }
+            // Check if it's an IP or if it's an ASN
+            else if (/(^\d*\.\d*\.\d*\.\d*)|(^AS\d*)/.test(currentLine)){
+                formattedOutput += `- ${currentLine}\n`;
+            }
+        }
+    }
+    formattedOutput += rules;
+
+    return formattedOutput;
+}
+
+module.exports = { formatLogs, formatIP, formatLogs, ceefFormatLogs, greetTime, stormwallLogs };

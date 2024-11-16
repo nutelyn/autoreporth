@@ -47,10 +47,10 @@
         posY += speedY;
 
         // Check for collision with walls
-        if (posX + 50 > window.innerWidth || posX < 0) {
+        if (posX + 100 > window.innerWidth || posX < 0) {
             speedX = -speedX; // Reverse direction
         }
-        if (posY + 50 > window.innerHeight || posY < 0) {
+        if (posY + 100 > window.innerHeight || posY < 0) {
             speedY = -speedY; // Reverse direction
         }
 

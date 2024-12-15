@@ -55,7 +55,9 @@ const severityMap = {
 
     "ET TROJAN DNS Reply Sinkhole Microsoft NO-IP Domain": "High",
     "ET TROJAN Known Hostile Domain ant.trenz.pl Lookup": "High",
-    "NETBIOS SMB srvsvc named pipe creation attempt": "High"
+    "NETBIOS SMB srvsvc named pipe creation attempt": "High",
+
+    "stream5: TCP Timestamp is missing": "Medium"
 };
 const abuseipkey = '<secret_key>';
 const categoriesMap = {
@@ -170,11 +172,18 @@ function ceefFormatLogs(inputText){
             continue;
         }
         // If it's a count
-        else if (/(^\d*$)|(\d*k$)/.test(currentLine)){
+        else if (/(^\d*$)|(\d*k$)|(\d*M$)/.test(currentLine)){
             continue;
         }
         // If it's user agent
         else if (currentLine === "User Agents"){
+            while(!(lines[i+1].trim() in cfHeaders)){
+                i++;
+                currentLine = lines[i].trim();
+            }
+        }
+        // If it's referers
+        else if (currentLine === "Referers"){
             while(!(lines[i+1].trim() in cfHeaders)){
                 i++;
                 currentLine = lines[i].trim();

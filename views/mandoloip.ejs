@@ -3,15 +3,18 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>mandolo IP autoformat v1.0</title>
+   <link rel="stylesheet" href="./styles/mandoloip.css">
+   <link rel="stylesheet" href="./styles/all.css">
+   <link rel="stylesheet" href="./styles/parser.css">
+   <title>Mandolo IP autoformat v1.0</title>
 </head>
 <body>
-   <h1>mandolo IP autoformat v1.0-dev</h1>
+   <h1>Mandolo IP autoformat <span class="version">v1.0-dev</span></h1>
    
    <form action="/mandoloip" method="POST">
       <textarea style="height: 80vh; width: 60vw;" name="text" rows="150" cols="50" placeholder="enter IP list"><%= formattedText %></textarea>
       <br>
-      <button type="submit">format</button>
+      <button type="submit">Format</button>
    </form>
 </body>
 </html>

@@ -1,0 +1,15 @@
+* {
+    font-family: monospace;
+}
+
+body {
+    height: 100vh; /* Full viewport height */
+}
+
+button {
+    display: inline-block;
+    padding: 10px 15px;
+    text-decoration: none; /* Remove underline */
+    border-radius: 5px; /* Rounded corners */
+    margin-top: 10px; /* Add space above the button */
+}

@@ -3,9 +3,7 @@ body {
     flex-direction: column;
     justify-content: space-between; /* Space between header and footer */
     align-items: center; /* Center content horizontally */
-    height: 100vh; /* Full viewport height */
     margin: 0; /* Remove default margin */
-    font-family: Arial, sans-serif; /* Set a default font */
 }
 
 .container {
@@ -17,17 +15,20 @@ body {
 }
 
 .button {
-    display: inline-block;
-    padding: 10px 15px;
-    background-color: #007BFF; /* Button color */
-    color: white; /* Text color */
-    text-decoration: none; /* Remove underline */
-    border-radius: 5px; /* Rounded corners */
-    margin-top: 20px; /* Add space above the button */
+    display: inline-block;  /* Adjust width to content */
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.3s;
+    text-decoration: none;
 }
 
 .button:hover {
-    background-color: #0056b3; /* Darker color on hover */
+    background: #0056b3;
 }
 
 footer {

@@ -381,4 +381,75 @@ function stormwallLogs(inputText){
     return formattedOutput;
 }
 
-module.exports = { formatLogs, formatIP, formatLogs, ceefFormatLogs, greetTime, stormwallLogs };
+function networkLogs(selection, networkData) {
+    // Say "selamat pagi, etc."
+    let salam = greetTime();
+
+    // Get date
+    let date = getDate();
+
+    // Create object for predefined & reassign selection to be used for routing
+    let attr = {
+        datacenter: null,
+        stormwall: null,
+        partial: null,
+        no: null
+    };
+    if (selection === "NME") {
+        attr = {
+            datacenter: "NME Equinix SG, Singapore",
+            stormwall: "",
+            partial: "",
+            no: ""
+        };
+        selection = "mrtg.newmediaexpress.com";
+    } else if (selection === "MTEN") {
+        attr = {
+            datacenter: "NEX DC M-TEN, Jakarta",
+            stormwall: "",
+            partial: "",
+            no: ""
+        };
+        selection = "prtg.cloudata.co.id";
+    } else if (selection === "Edge") {
+        attr = {
+            datacenter: "Edge2 DC, Kuningan, Jakarta",
+            stormwall: "",
+            partial: "",
+            no: ""
+        };
+        selection = "prtg-netmon.indo.net.id";
+    }
+
+    // Get the routing data and sort it
+    networkData.forEach(row => {
+        // console.log(row);
+        if (row.monitoring === selection) {
+            if (row.stormwall === "Full Stormwall") {
+                attr.stormwall += `${row.prefix} => ${row.desc}\n`;
+            } else if (row.stormwall === "Partial Stormwall") {
+                attr.partial += `${row.prefix} => ${row.desc}\n`; 
+            } else if (row.stormwall === "No Stormwall"){
+                attr.no += `${row.prefix} => ${row.desc}\n`; 
+            }
+        }
+    })
+
+    // Parse routing
+    let route = "";
+    if (attr.stormwall !== "") {
+        route += `(Full Stormwall)\n${attr.stormwall}\n`;
+    } 
+    if (attr.partial !== "") {
+        route += `(Partial Stormwall)\n${attr.partial}\n`;
+    } 
+    if (attr.no !== "") {
+        route += `(No Stormwall)\n${attr.no}\n`;
+    }
+
+    let predef = `${salam} network ${attr.datacenter} mengalami lonjakan traffic [inbound|outbound|total] yang tinggi pada ${date} pukul [WAKTU].\n\nMAX: +- [load]\n\nRouting:\n${route}Impact: [no_downtime|server_down] detected on StatusCake.\n\nTerima Kasih.`;
+
+    return predef;
+}
+
+module.exports = { formatLogs, formatIP, formatLogs, ceefFormatLogs, greetTime, stormwallLogs, networkLogs };

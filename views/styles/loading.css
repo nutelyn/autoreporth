@@ -1,0 +1,25 @@
+* {
+    font-family: monospace;
+}
+
+/* Loading overlay */
+#loading-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the element */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-align: center; /* Center multi-line text horizontally */
+    font-size: 1.5rem;
+    z-index: 1000;
+}
+
+#loading-overlay span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -1,0 +1,12 @@
+h1 {
+    color: #3BB267;
+}
+
+button {
+    background-color: #3BB267; /* Button color */
+    color: white; /* Text color */
+}
+
+button:hover {
+    background-color: #92c0a3; /* Darker color on hover */
+}

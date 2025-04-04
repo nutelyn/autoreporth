@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="./styles/network.css">
+   <link rel="stylesheet" href="./styles/loading.css">
+   <link rel="stylesheet" href="./styles/all.css">
+   <link rel="stylesheet" href="./styles/popup.css">
+   <link rel="stylesheet" href="./styles/parser.css">
+   <script src="./scripts/loading.js"></script>
+   <script src="./scripts/popup.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <title>network autoreport v1.0</title>
+</head>
+<body>
+
+   <!-- Loading Screen -->
+   <div id="loading-overlay">
+      <span>Loading data, please wait...</span>
+   </div>
+
+   <!-- Actual Page -->
+   <div id="data-container" hidden>
+      <div id="popup-alert">
+         <div class="popup-content">
+           <p>Your message goes here!</p>
+           <div class="loading-bar"></div>
+         </div>
+      </div>
+      <h1 class="rainbow">Network autoreport <span class="version">v1.0-dev</span></h1>
+      <form action="/network" method="POST">
+         <% if (formattedText) { %>
+            <textarea style="height: 80vh; width: 60vw;" name="text" rows="150" cols="50" placeholder="Enter your text here..." oncopy="showPopupAlert('MOHON JANGAN LUPA GANTI PLACEHOLDERNYA!')"><%= formattedText %></textarea>
+         <% } else { %>
+            <table border="1">
+                <thead>
+                   <tr>
+                       <th colspan="4" style="background-color: #007BFF; color: white;">
+                          <div style="display: flex; justify-content: space-between;">
+                             <strong><h3>Dewaweb (AS139456) IP Blocks Allocation (Upstreams)</h3></strong>
+                             <span style="margin-top: auto; margin-bottom: auto;">Last Updated around <%= prevTimestamp %> minutes ago <i id="refreshButton" class="fa fa-refresh" style="cursor: pointer;" onclick="fetchingData('/getnew')"></i></span>
+                          </div>
+                       </th>
+                   </tr>
+                     <tr>
+                        <td><strong>IP Blocks/CIDR</strong></td>
+                        <td><strong>Description</strong></td>
+                        <td><strong>Upstreams</strong></td>
+                        <td><strong>Stormwall Status</strong></td>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <% if (tableData) { %>
+                        <% let curDataCenter = null; %>
+                        <% tableData.forEach(row => { %>
+                           <% if (curDataCenter !== row.label) { %>
+                              <tr>
+                                 <th colspan="4">
+                                    <strong><%= row.label %></strong>
+                                 </th>
+                             </tr>
+                           <% } %>
+                           <% curDataCenter = row.label; %>
+                              <tr>
+                                 <td><%= row.prefix %></td>
+                                 <td><%= row.desc  %></td>
+                                 <td><%- row.upstream.replace(/#/g, '<br>') %></td>
+                                 <td><%= row.stormwall %></td>
+                              </tr>
+                           <% }) %>
+                     <% } else { %>
+                        <tr>
+                           <td colspan="4">Loading...</td>
+                        </tr>
+                     <% } %>
+                  </tbody>
+            </table>
+         <% } %>       
+         <div class="tab-container">
+            <% if (formattedText) { %>
+               <button class="tab" name="selection" value="None" style="background-color: red; color: white;">Back</button>
+            <% } %>
+            <button class="tab" name="selection" value="NME">NME</button>
+            <button class="tab" name="selection" value="MTEN">M-TEN</button>
+            <button class="tab" name="selection" value="Edge">Edge2 DC</button>
+         </div>
+      </form>
+   </div>
+   
+</body>
+</html>
+
+<% if (!tableData) { %>
+   <script>
+
+      // Fetch data on page load
+      window.onload = noData();
+
+   </script>
+<% } else { %>
+   <script>
+
+      // Make page visible if data is fetched
+      hasData();
+
+   </script>
+<% } %>

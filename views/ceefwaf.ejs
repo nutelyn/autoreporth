@@ -3,16 +3,25 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>ceefwaf autoreport v1.0</title>
+   <link rel="stylesheet" href="./styles/ceef.css">
+   <link rel="stylesheet" href="./styles/popup.css">
+   <link rel="stylesheet" href="./styles/all.css">
+   <link rel="stylesheet" href="./styles/parser.css">
+   <script src="./scripts/popup.js"></script>
+   <title>Ceefwaf autoreport v1.0</title>
 </head>
 <body>
-   <h1>ceefwaf autoreport v1.0-dev</h1>
-   
+   <div id="popup-alert">
+      <div class="popup-content">
+        <p>Your message goes here!</p>
+        <div class="loading-bar"></div>
+      </div>
+   </div>
+   <h1>Ceefwaf autoreport <span class="version">v1.0-dev</span></h1>
    <form action="/ceefwaf" method="POST">
-      <h1 style="color: red;">MOHON JANGAN LUPA GANTI PLACEHOLDERNYA</h1>
-      <textarea style="height: 80vh; width: 60vw;" name="text" rows="150" cols="50" placeholder="Enter your text here..."><%= formattedText %></textarea>
+      <textarea style="height: 80vh; width: 60vw;" name="text" rows="150" cols="50" placeholder="Enter your text here..." oncopy="showPopupAlert('MOHON JANGAN LUPA GANTI PLACEHOLDERNYA!')"><%= formattedText %></textarea>
       <br>
-      <button type="submit">format</button>
+      <button type="submit">Format</button>
    </form>
 </body>
 </html>
